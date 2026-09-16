@@ -29,14 +29,15 @@ constexpr std::array<Primitiva, N_PRIMITIVAS> catalogo{{
     { "GL_POLYGON",        GL_POLYGON        }
 }};
 
-/* Os seis vértices, declarados UMA ÚNICA VEZ, fora do laço de desenho. */
+/* Vértices do hexágono dispostos no padrão do slide (3 colunas: 1-2 esq, 3-4 centro, 5-6 dir).
+ * Mantém o hexágono simétrico e produz os padrões didáticos (ex: 3 linhas verticais em GL_LINES). */
 constexpr std::array<std::array<float, 2>, N_VERTICES> vertices{{
-    { -0.80f, -0.30f },
-    { -0.20f, -0.70f },
-    {  0.60f, -0.50f },
-    {  0.80f,  0.30f },
-    {  0.10f,  0.80f },
-    { -0.60f,  0.50f }
+    { -0.606f,  0.35f },   // 1: superior esquerdo
+    { -0.606f, -0.35f },   // 2: inferior esquerdo
+    {  0.000f,  0.70f },   // 3: ponta superior (eixo central)
+    {  0.000f, -0.70f },   // 4: ponta inferior (eixo central)
+    {  0.606f,  0.35f },   // 5: superior direito
+    {  0.606f, -0.35f }    // 6: inferior direito
 }};
 
 static int  atual = 0;          // índice da primitiva corrente

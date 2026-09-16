@@ -14,6 +14,7 @@ static bool arame = false;   // recurso extra: ver a malha interna
 
 /* -----------------------------------------------------------------
  * Base sob as colunas — GL_QUADS
+ * Faixa retangular apoiando a fileira.
  * ----------------------------------------------------------------- */
 static void desenharBase()
 {
@@ -29,6 +30,7 @@ static void desenharBase()
 /* -----------------------------------------------------------------
  * Fileira de colunas — GL_QUAD_STRIP
  * Cada par (base, topo) acrescenta um quadrilátero à faixa.
+ * Vértices em progressão horizontal, alturas variadas.
  * ----------------------------------------------------------------- */
 constexpr std::array<float, N_COLUNAS + 1> alturaColuna{
     -0.30f, -0.05f, -0.45f, 0.10f, -0.20f, 0.25f, -0.35f
@@ -48,6 +50,7 @@ static void desenharColunas()
 
 /* -----------------------------------------------------------------
  * Objeto retangular — GL_QUADS
+ * Forma mais simples da cena, útil como primeiro teste.
  * ----------------------------------------------------------------- */
 static void desenharObjetoRetangular()
 {
@@ -62,6 +65,7 @@ static void desenharObjetoRetangular()
 
 /* -----------------------------------------------------------------
  * Objeto triangular — GL_TRIANGLES
+ * Três vértices independentes, sem compartilhamento.
  * ----------------------------------------------------------------- */
 static void desenharObjetoTriangular()
 {
@@ -94,6 +98,7 @@ static void desenharObjetoCircular()
 
 /* -----------------------------------------------------------------
  * Objeto alongado — GL_TRIANGLE_STRIP
+ * Sequência de vértices alternando os dois lados da faixa.
  * ----------------------------------------------------------------- */
 static void desenharObjetoAlongado()
 {
@@ -114,6 +119,7 @@ static void desenharObjetoAlongado()
 
 /* -----------------------------------------------------------------
  * Contorno de um dos objetos — GL_LINE_LOOP
+ * Fechamento automático evidencia a diferença frente à tira de linhas.
  * ----------------------------------------------------------------- */
 static void desenharContorno()
 {
@@ -129,6 +135,7 @@ static void desenharContorno()
 
 /* -----------------------------------------------------------------
  * Marcadores de posição — GL_POINTS
+ * Tamanho de ponto ajustado por estado.
  * ----------------------------------------------------------------- */
 static void desenharMarcadores()
 {
@@ -144,21 +151,21 @@ static void desenharMarcadores()
 }
 
 /* -----------------------------------------------------------------
- * Cena — a ORDEM das chamadas é a ordem de sobreposição.
+ * Cena — a ORDEM das chamadas é a ordem de sobreposição (algoritmo do pintor).
  * ----------------------------------------------------------------- */
 static void exibir()
 {
     glClear(GL_COLOR_BUFFER_BIT);
     glPolygonMode(GL_FRONT_AND_BACK, arame ? GL_LINE : GL_FILL);
 
-    desenharBase();               // 1º — fundo
-    desenharColunas();            // 2º — fileira de colunas
-    desenharObjetoRetangular();   // 3º
-    desenharObjetoTriangular();   // 4º
-    desenharObjetoCircular();     // 5º
-    desenharObjetoAlongado();     // 6º
-    desenharContorno();           // 7º — contorno por cima
-    desenharMarcadores();         // 8º — por cima de tudo
+    desenharBase();               // 1º — fundo (GL_QUADS)
+    desenharColunas();            // 2º — fileira de colunas (GL_QUAD_STRIP)
+    desenharObjetoRetangular();   // 3º — objeto retangular (GL_QUADS)
+    desenharObjetoTriangular();   // 4º — objeto triangular (GL_TRIANGLES)
+    desenharObjetoCircular();     // 5º — objeto circular (GL_TRIANGLE_FAN)
+    desenharObjetoAlongado();     // 6º — objeto alongado (GL_TRIANGLE_STRIP)
+    desenharContorno();           // 7º — contorno por cima (GL_LINE_LOOP)
+    desenharMarcadores();         // 8º — por cima de tudo (GL_POINTS)
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glutSwapBuffers();
@@ -190,3 +197,4 @@ int main(int argc, char **argv)
     glutMainLoop();
     return 0;
 }
+
