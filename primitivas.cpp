@@ -14,8 +14,8 @@ struct Primitiva {
     GLenum      modo;
 };
 
-/* Quadro de referência do bloco 2.
- * Incluir uma primitiva nova aqui já a coloca na varredura. */
+// Quadro de referência do bloco 2.
+// Incluir uma primitiva nova aqui já a coloca na varredura.
 constexpr std::array<Primitiva, N_PRIMITIVAS> catalogo{{
     { "GL_POINTS",         GL_POINTS         },
     { "GL_LINES",          GL_LINES          },
@@ -29,8 +29,7 @@ constexpr std::array<Primitiva, N_PRIMITIVAS> catalogo{{
     { "GL_POLYGON",        GL_POLYGON        }
 }};
 
-/* Vértices do hexágono dispostos no padrão do slide (3 colunas: 1-2 esq, 3-4 centro, 5-6 dir).
- * Mantém o hexágono simétrico e produz os padrões didáticos (ex: 3 linhas verticais em GL_LINES). */
+//Vértices do hexágono no formato de linhas zigue-zague verticais.
 constexpr std::array<std::array<float, 2>, N_VERTICES> vertices{{
     { -0.606f,  0.35f },   // 1: superior esquerdo
     { -0.606f, -0.35f },   // 2: inferior esquerdo
@@ -40,8 +39,18 @@ constexpr std::array<std::array<float, 2>, N_VERTICES> vertices{{
     {  0.606f, -0.35f }    // 6: inferior direito
 }};
 
-static int  atual = 0;          // índice da primitiva corrente
-static bool arame = false;      // exercício de sondagem (bloco 3.4)
+// Os seis vértices de um hexágono em sentido horário.
+/*constexpr std::array<std::array<float, 2>, N_VERTICES> vertices{{
+    { -0.606f,  0.35f }, // 1: superior esquerdo
+    {  0.000f,  0.70f }, // 2: ponta superior (eixo central)
+    {  0.606f,  0.35f }, // 3: superior direito
+    {  0.606f, -0.35f }, // 4: inferior direito
+    {  0.000f, -0.70f }, // 5: ponta inferior (eixo central)
+    { -0.606f, -0.35f }  // 6: inferior esquerdo
+}};*/
+
+static int  atual = 0;          // primitiva corrente
+static bool arame = false;      // wireframe
 
 static void atualizarTitulo()
 {
@@ -51,13 +60,13 @@ static void atualizarTitulo()
     glutSetWindowTitle(titulo);
 }
 
-/* teclas comuns: 1..0, W, ESC */
+// teclas comuns: 1..0, W, ESC
 static void aoTeclar(unsigned char tecla, int /*x*/, int /*y*/)
 {
     if (tecla >= '1' && tecla <= '9') {
-        atual = tecla - '1';                        // 1..9 -> índices 0..8
+        atual = tecla - '1';                        // 1..9
     } else if (tecla == '0') {
-        atual = 9;                                  // 0    -> GL_POLYGON
+        atual = 9;                                  // 0
     } else if (tecla == 'w' || tecla == 'W') {
         arame = !arame;
     } else if (tecla == 27) {                       // ESC
@@ -70,7 +79,7 @@ static void aoTeclar(unsigned char tecla, int /*x*/, int /*y*/)
     glutPostRedisplay();
 }
 
-/* teclas especiais: setas para avançar e voltar */
+// teclas especiais: setas para avançar e voltar 
 static void aoTeclarEspecial(int tecla, int /*x*/, int /*y*/)
 {
     if (tecla == GLUT_KEY_RIGHT || tecla == GLUT_KEY_DOWN) {
@@ -84,7 +93,7 @@ static void aoTeclarEspecial(int tecla, int /*x*/, int /*y*/)
     glutPostRedisplay();
 }
 
-static void exibir()
+static void exibir() // callback de renderização
 {
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -93,8 +102,8 @@ static void exibir()
     glLineWidth(2.0f);
     glPolygonMode(GL_FRONT_AND_BACK, arame ? GL_LINE : GL_FILL);
 
-    /* ÚNICO bloco de especificação de vértices, parametrizado
-     * pela primitiva corrente. */
+    // ÚNICO bloco de especificação de vértices, parametrizado
+    // pela primitiva corrente. 
     glBegin(catalogo[atual].modo);
         for (const auto &v : vertices)
             glVertex2f(v[0], v[1]);
