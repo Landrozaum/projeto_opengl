@@ -27,7 +27,7 @@ constexpr std::array<Primitiva, N_PRIMITIVAS> catalogo{{
     { "GL_POLYGON",        GL_POLYGON        }
 }};
 
-/* Vértices do hexágono dispostos no padrão do slide (3 colunas: 1-2 esq, 3-4 centro, 5-6 dir).
+/* Vértices do hexágono.
  * Mantém o hexágono simétrico e produz os padrões didáticos de interpolação. */
 constexpr std::array<std::array<float, 2>, N_VERTICES> vertices{{
     { -0.606f,  0.35f },   // 1: superior esquerdo
@@ -38,8 +38,18 @@ constexpr std::array<std::array<float, 2>, N_VERTICES> vertices{{
     {  0.606f, -0.35f }    // 6: inferior direito
 }};
 
-/* Uma cor distinta por vértice. Nenhuma cor intermediária foi
- * declarada — as transições aparecem na rasterização. */
+ /*// Os seis vértices de um hexágono em sentido horário.
+constexpr std::array<std::array<float, 2>, N_VERTICES> vertices{{
+    { -0.606f,  0.35f }, // 1: superior esquerdo
+    {  0.000f,  0.70f }, // 2: ponta superior (eixo central)
+    {  0.606f,  0.35f }, // 3: superior direito
+    {  0.606f, -0.35f }, // 4: inferior direito
+    {  0.000f, -0.70f }, // 5: ponta inferior (eixo central)
+    { -0.606f, -0.35f }  // 6: inferior esquerdo
+}};*/
+
+// Uma cor distinta por vértice. Nenhuma cor intermediária foi
+// declarada, as transições aparecem na rasterização. 
 constexpr std::array<std::array<float, 3>, N_VERTICES> cores{{
     { 1.00f, 0.15f, 0.15f },   // vermelho
     { 1.00f, 0.90f, 0.15f },   // amarelo
@@ -51,7 +61,7 @@ constexpr std::array<std::array<float, 3>, N_VERTICES> cores{{
 
 static int  atual           = 0;
 static bool arame           = false;
-static bool coresPorVertice = true;
+static bool coresPorVertice = true;     // alternar cores
 
 static void atualizarTitulo()
 {
@@ -62,6 +72,7 @@ static void atualizarTitulo()
                   arame ? "   [arame]" : "");
     glutSetWindowTitle(titulo);
 }
+
 
 static void aoTeclar(unsigned char tecla, int /*x*/, int /*y*/)
 {
@@ -106,8 +117,8 @@ static void exibir()
 
     glBegin(catalogo[atual].modo);
         for (std::size_t i = 0; i < vertices.size(); ++i) {
-            /* A cor é ESTADO CORRENTE: vale para o próximo vértice
-             * informado. Por isso ela vem imediatamente antes do glVertex2f. */
+            // A cor é ESTADO CORRENTE: vale para o próximo vértice
+            // informado. Por isso ela vem imediatamente antes do glVertex2f.
             if (coresPorVertice)
                 glColor3f(cores[i][0], cores[i][1], cores[i][2]);
             else
@@ -130,8 +141,8 @@ int main(int argc, char **argv)
 
     glClearColor(0.10f, 0.12f, 0.16f, 1.0f);
 
-    /* padrão da biblioteca, mas declarado de propósito:
-     * é o modo que interpola a cor entre os vértices. */
+    // padrão da biblioteca, mas declarado de propósito:
+    // é o modo que interpola a cor entre os vértices.
     glShadeModel(GL_SMOOTH);
 
     glutDisplayFunc(exibir);
